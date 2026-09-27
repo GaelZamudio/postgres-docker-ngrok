@@ -1,8 +1,23 @@
+<div align="center">
+
+# INSTITUTO POLITÉCNICO NACIONAL
+
+## ESCUELA SUPERIOR DE CÓMPUTO
+
+## Bases de Datos - Servidor para Postgres con Ngrok
+
+### Alumno: Zamudio Monroy Gael Armando
+### Grupo: 3BV1
+## 
+</div>
+
+
 # Postgres en Docker con acceso remoto (ngrok)
 
 ## Índice
 
 - [¿Qué hace este proyecto?](#qué-hace-este-proyecto)
+- [¿Qué es Ngrok?](#qué-es-ngrok)
 - [¿Qué es un contenedor Docker?](#qué-es-un-contenedor-docker)
 - [¿Qué es una imagen de Docker?](#qué-es-una-imagen-de-docker)
 - [Imágenes utilizadas en este proyecto](#imágenes-utilizadas-en-este-proyecto)
@@ -37,6 +52,50 @@ En este caso para interactuar con la base de datos de forma visual, se usa
 a servidores remotos o locales, ejecutar consultas SQL y administrar 
 bases de datos sin necesidad de usar la terminal.
 
+## ¿Qué es Ngrok?
+ngrok es un servicio que expone un puerto de tu máquina local hacia 
+internet mediante una dirección pública temporal, sin necesidad de 
+configurar tu router ni abrir puertos manualmente. Funciona como un 
+**túnel**: crea una conexión entre tu equipo e internet, de forma que 
+un servicio que normalmente solo estaría disponible dentro de tu red 
+local (por estar detrás de un NAT o un firewall) se vuelve accesible 
+desde cualquier computadora con conexión a internet, en cualquier 
+parte del mundo.
+ 
+En este proyecto, ngrok es justo la pieza que permite que **Postgres 
+no se quede sólo en tu máquina**: el contenedor de Postgres 
+solo escucha en tu red local, así que ngrok toma ese puerto y lo 
+expone públicamente para que cualquiera con la URL generada pueda conectarse desde 
+pgAdmin, sin importar en qué red esté.
+ 
+Para lograrlo, basta con indicarle a ngrok qué puerto exponer, por 
+ejemplo:
+ 
+```bash
+ngrok http 80
+```
+ 
+y automáticamente genera una URL pública que redirige todo el tráfico hacia ese puerto local. 
+
+En este proyecto nosotros definimos el puerto directamente en `docker-compose.yml`
+```yaml
+ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok_tunel
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    command: tcp postgres:5432
+    ports:
+      - "4040:4040" #aquí se define el puerto
+    depends_on:
+      - postgres
+```
+Vale la pena tener presente que esta misma facilidad para exponer un 
+servicio local a internet también puede usarse con fines maliciosos 
+(por ejemplo, para alojar temporalmente sitios de phishing), así que 
+conviene usarlo solo con servicios propios o autorizados (como se 
+hace aquí).
+
 ## ¿Qué es un contenedor Docker?
 
 Un contenedor es un entorno aislado y ligero que empaqueta una 
@@ -68,7 +127,7 @@ volumes:
 ```
 
 Esto conecta la carpeta `data/` de tu máquina con la carpeta interna 
-del contenedor donde Postgres guarda sus archivos¿.
+del contenedor donde Postgres guarda sus archivos.
 
 ## ¿Qué es una imagen de Docker?
 
@@ -109,9 +168,15 @@ contenedores, todos partiendo exactamente del mismo punto de inicio.
    cp .env.example .env
 ```
 
-3. Consigue tu propio authtoken de ngrok en 
-   https://dashboard.ngrok.com/get-started/your-authtoken 
-   y pégalo en tu archivo `.env`, en la variable `NGROK_AUTHTOKEN`.
+3. Abre el archivo `.env` y completa las siguientes variables:
+   
+   | Variable | Para qué sirve |
+   |---|---|
+   | `NGROK_AUTHTOKEN` | Tu authtoken de ngrok. Consíguelo en https://dashboard.ngrok.com/get-started/your-authtoken |
+   | `POSTGRES_USER` | Usuario con el que se creará la base de datos (ej. `postgres`) |
+   | `POSTGRES_PASSWORD` | Contraseña de ese usuario |
+   | `POSTGRES_DB` | Nombre de la base de datos que se creará (por default `postgres`) |
+Estos son los mismos valores que usarás después para conectarte desde pgAdmin (ver la sección [Conectarse con pgAdmin](#conectarse-con-pgadmin)).
 
 ## Levantar el proyecto
 Abre la terminal en la ruta donde clonaste el repositorio y ejecuta:
@@ -181,3 +246,5 @@ La URL de ngrok **cambia cada vez que se reinicia el contenedor**
 - ngrok Inc. *What is ngrok?* https://ngrok.com/docs/what-is-ngrok/
 - Docker Hub. *postgres.* https://hub.docker.com/_/postgres
 - Docker Hub. *ngrok/ngrok.* https://hub.docker.com/r/ngrok/ngrok
+- Docker Hub. ngrok/ngrok. https://hub.docker.com/r/ngrok/ngrok
+- ngrok Inc. Getting started with ngrok. https://ngrok.com/docs/start
