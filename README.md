@@ -6,6 +6,7 @@
 
 ## Bases de Datos - Servidor para Postgres con Ngrok
 
+### Profesor: Hurtado Avilés Gabriel
 ### Alumno: Zamudio Monroy Gael Armando
 ### Grupo: 3BV1
 ## 
@@ -178,6 +179,12 @@ contenedores, todos partiendo exactamente del mismo punto de inicio.
    | `POSTGRES_DB` | Nombre de la base de datos que se creará (por default `postgres`) |
 Estos son los mismos valores que usarás después para conectarte desde pgAdmin (ver la sección [Conectarse con pgAdmin](#conectarse-con-pgadmin)).
 
+
+
+https://github.com/user-attachments/assets/c6632c7d-58db-4cf0-8df5-5148c23cb672
+
+
+
 ## Levantar el proyecto
 Abre la terminal en la ruta donde clonaste el repositorio y ejecuta:
 ```bash
@@ -193,6 +200,12 @@ Verifica que ambos estén corriendo con:
 docker ps
 ```
 
+
+
+https://github.com/user-attachments/assets/efe4e674-fd38-4718-9bc6-bd3146d0eecf
+
+
+
 ## Obtener tu dirección pública
 
 Abre en tu navegador:
@@ -200,6 +213,12 @@ http://localhost:4040
 
 Ahí verás una línea con una estructura como `tcp://X.tcp.ngrok.io:XXXXX` esos son el 
 host (`X.tcp.ngrok.io`) y puerto (`XXXXX`) que necesitas para conectarte desde fuera.
+
+
+
+https://github.com/user-attachments/assets/587d4873-4658-4df3-82ec-3a4d60bc42eb
+
+
 
 ## Conectarse con pgAdmin
 
@@ -214,6 +233,12 @@ Ahora, en la pestaña **Connection**:
 | Password | el que hayas puesto en `.env` |
 | Database | el que hayas puesto en `.env` (por default `postgres`) |
 
+
+
+https://github.com/user-attachments/assets/8a71acf8-4f74-40d9-b29a-a372b10b31ad
+
+
+
 ## Detener el proyecto
 
 ```bash
@@ -222,6 +247,12 @@ docker compose down
 
 Esto detiene y elimina los contenedores (no borra tus datos, que 
 quedan guardados en la carpeta `data/` gracias al volumen configurado).
+
+
+
+https://github.com/user-attachments/assets/599f9ace-92ad-4efe-8205-e27ffc290ff3
+
+
 
 ## Notas importantes
 
